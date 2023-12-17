@@ -6,13 +6,44 @@ canvas.height = 576
 
 const Background = new Sprite({ position: { x: 0, y: 0 }, src: "assets/background (1).png" })
 
-const player = new Player({position:{x:75,y:0},src:"./assets/playerSprite/Idle.png",frame:8,scale:0.5});
+const player = new Player({
+    position: { x: 75, y: 0 }, src: "./assets/playerSprite/Idle.png", frame: 8, scale: 0.5,
+    animation: {
+        idle: {
+            src: "./assets/playerSprite/Idle.png",
+            frame: 8,
+            FrameBuffer:5
+        },
+        run: {
+            src: "./assets/playerSprite/Run.png",
+            frame: 8,
+            FrameBuffer:7
+        },
+        runLeft: {
+            src: "./assets/playerSprite/RunLeft.png",
+            frame: 8,
+            FrameBuffer:5
+        }
+        ,
+        jump:{
+            src:"./assets/playerSprite/Jump.png",
+            frame:2,
+            FrameBuffer:3
+        }
+        ,
+        fall:{
+            src:"./assets/playerSprite/Fall.png",
+            frame:2,
+            FrameBuffer:3
+        }
+    }
+});
 
 const keys = {
-    d:{
-        pressed:false
-    },a:{
-        pressed:false
+    d: {
+        pressed: false
+    }, a: {
+        pressed: false
     }
 }
 
@@ -37,9 +68,25 @@ function animate() {
     player.update();
     c.restore();
 
-   player.velocity.x=0;
-   if(keys.d.pressed)  player.velocity.x = 1;
-            else if (keys.a.pressed) player.velocity.x=(-1)
+    player.velocity.x = 0;
+    if (keys.d.pressed) {
+        player.velocity.x = 1;
+        player.switchSprite('run');
+    }
+
+    else if (keys.a.pressed) {
+        player.velocity.x = (-1)
+        player.switchSprite('runLeft');
+    }
+    else if (player.velocity.y===0){
+        player.switchSprite('idle')
+    }
+    else if (player.velocity.y<0){
+        player.switchSprite('jump')
+    }
+    else if (player.velocity.y>0){
+        player.switchSprite('fall')
+    }
         
     
 
@@ -48,40 +95,42 @@ function animate() {
 
 
 
-animate();
+    animate();
 
 
 
-window.addEventListener('keydown', (event) => {
-    switch (event.key) {
-        case "w":
-            console.log(player.velocity.y)
-            player.velocity.y = -4;
-            break;
-        case "a":
-             keys.a.pressed=true;
-            break;
-        case "d":
-            keys.d.pressed=true;
-            break;
+    window.addEventListener('keydown', (event) => {
+        switch (event.key) {
+            case "w":
+                console.log(player.velocity.y)
+                player.velocity.y = -4;
+                break;
+            case "a":
+                keys.a.pressed = true;
+               
+                break;
+            case "d":
+                keys.d.pressed = true;
+               
+                break;
 
-        default:
-            break;
-    }
-})
+            default:
+                break;
+        }
+    })
 
-window.addEventListener('keyup', (event) => {
-    switch(event.key){
-        case "a":
-            keys.a.pressed = false;
-            break;
-            
-        case "d":
-            keys.d.pressed = false;
-            break;
+    window.addEventListener('keyup', (event) => {
+        switch (event.key) {
+            case "a":
+                keys.a.pressed = false;
+                break;
 
-        default:
-            break;
-    }
-})
+            case "d":
+                keys.d.pressed = false;
+                break;
+
+            default:
+                break;
+        }
+    })
 
